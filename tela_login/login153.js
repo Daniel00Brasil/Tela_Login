@@ -6,17 +6,15 @@ class Login {
     static estilo_css = null //CONFIGURAÇÃO DE ESTILO CSS
     static callback_S = null
     static callback_N = null
-    static config_html= {    //CONFIGURAÇÃO DE MARCAÇÃO HTML
+    static config     = {    //CONFIGURAÇÃO DE MARCAÇÃO HTML
         cor : "048",
-        img : "./cfb.png"
+        img : "./cfb.png",
+        endpoint: null,// "https://73c5b81a-7be4-4798-9ce5-ebdfcb1467fb-00-8562namg8p6l.worf.replit.dev/"
     }
     
 //------------------------------CONSTRUÇÃO FINAL DO ENDPOINT------------------------------------------
-    static endpoint = "https://73c5b81a-7be4-4798-9ce5-ebdfcb1467fb-00-8562namg8p6l.worf.replit.dev/"
-    static login=(callback_S,callback_N,config_html=null) => {
-        if(config_html != null) {
-            this.config_html = config_html
-        }
+    static login=(callback_S,callback_N,config) => {
+        this.config = config
         this.callback_S=() => {callback_S()}
         this.callback_N=() => {callback_N()}
 //--------------------------------------------------------------------------------------------------        
@@ -199,22 +197,22 @@ class Login {
         const matri = document.getElementById("f_userName").value
         const pass = document.getElementById("f_senha").value
     
-        const endpoint = `https://73c5b81a-7be4-4798-9ce5-ebdfcb1467fb-00-8562namg8p6l.worf.replit.dev/?matricula=${matri}&senha=${pass}`
+        const endpoint = `${this.config.endpoint}/${matri}&senha=${pass}`
         fetch(endpoint)
         .then(res => res.json())
         .then(res => {
             if (res) {
-                this.logado  = true
-                this.matrlog = matri
-                this.nomelog = res.nome
-                this.aceslog = res.acesso
+                sessionStorage.setItem("logado","true")
+                sessionStorage.setItem("matlogado",matri)
+                sessionStorage.setItem("nomelogado",res.nome)
+                sessionStorage.setItem("acessologado",res.acesso)
                 this.callback_S()
                 this.fechar()
             }else {
-                this.logado  = null
-                this.matrlog = null
-                this.nomelog = null
-                this.aceslog = null
+                sessionStorage.setItem("logado","false")
+                sessionStorage.setItem("matlogado","")
+                sessionStorage.setItem("nomelogado","")
+                sessionStorage.setItem("acessologado","")
                 this.callback_N()
             }
         })
@@ -230,4 +228,32 @@ class Login {
     }
 
 }
-export {Login}
+//export {Login}
+
+/* EXEMPLO DE API
+    // API DEVERÁ RETORNAR NOME E ACESSO CASO O LOGIN SEJA EFETUADO COM SUCESSO
+    // API DEVERÁ RESTORNAR NULL CASO O LOGIN NÃO SEJA EFETUADO
+
+    // var http = require("http");
+    // var url = require("url");
+
+    // http.createServer(function (req, res) {
+    //     res.setHeader("Access-Control-Allow-Origin", "*");
+    //     res.writeHead(200, { "Content-Type": "application/json" });
+
+    //     let parametros = url.parse(req.url, true);
+    //     let matri = parametros.query.matricula;
+    //     let pass = parametros.query.senha;
+    //     let dados = null;
+
+    //     if (matri == "123" && pass == "321") {
+    //       dados = {
+    //         nome: "Adm",
+    //         acesso: 10,
+    //       };
+    //     }
+
+    //     res.end(JSON.stringify(dados));
+    //   })
+    //   .listen(8080);
+*/
